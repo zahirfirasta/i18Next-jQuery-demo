@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sample for translation using i18Next.js with jQuery</title>
+    <meta charset="utf-8" />
+    <script src="../Scripts/jquery-3.2.1.min.js"></script>
+    <script src="../Scripts/i18next.min.js"></script>
+    <script src="../Scripts/jquery_i18next.min.js"></script>
+    <script src="../Scripts/i18nextXHRBackend.min.js"></script>
+
+</head>
+<body>
+
+    <br />
+    <div class="wrapper">
+        <div class="select-languages-wrapper">
+            <span data-i18n="[title]labels.selectLanguages; labels.selectLanguages"></span>
+            <span>
+                <input type="radio" class="radio-inline" id="language1" name="selectLanguages">
+                <label data-i18n="labels.language1">
+                </label>
+            </span>
+            <span>
+
+                <input type="radio" class="radio-inline" id="language2" name="selectLanguages" checked="checked">
+                <label data-i18n="labels.language2">
+                </label>
+            </span>
+        </div>
+        <div class="text-wrapper">
+            <p data-i18n="labels.sampleText"></p>
+        </div>
+    </div>
+    <script type="text/javascript">
+        const language1 = "en";
+        const language2 = "de";
+        let language = language2;
+
+        //for using translation from translation.js inside locales folder
+        i18next.use(i18nextXHRBackend);
+
+        //configuration
+        i18next.init({
+            'debug': true,
+            'lng': language,
+            'fallbackLng': 'en',
+            backend: {
+                loadPath: '../locales/{{lng}}/translation.js'
+            }
+        }, function () {
+            jqueryI18next.init(i18next, $);
+
+            //translate
+            $('body').localize();
+        });
+    </script>
+    <script>
+        $(document).ready(function myfunction() {
+            language = $("#language1").prop("checked") ? language1 : language2;
+
+            $("#language1").click(function () {
+                if (language == language1) {
+                    alert(i18next.t('messages.alreadySelected'));
+                }
+                else {
+                    language = language1;
+                    i18next.changeLanguage(language1, (err, t) => {
+                        if (err) return console.log('something went wrong loading', err);
+
+                        //re-translate
+                        $('body').localize();
+                    });
+                }
+            });
+
+            $("#language2").click(function () {
+                if (language == language2) {
+                    alert(i18next.t('messages.alreadySelected'));
+                }
+                else {
+                    language = language2;
+
+                    i18next.changeLanguage(language2, (err, t) => {
+                        if (err) return console.log('something went wrong loading', err);
+
+                        //re-translate
+                        $('body').localize();
+                    });
+                }
+            });
+
+        });
+    </script>
+
+</body>
+</html>
